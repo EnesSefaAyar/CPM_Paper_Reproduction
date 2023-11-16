@@ -4,35 +4,55 @@ editor_options:
   chunk_output_type: console
 ---
 
+# Install Requirements
+```{r}
+install.packages("textshape")
+install.packages("pheatmap")
+```
+
+# Load Requirements
+
+```{r}
+library(textshape)
+library(pheatmap)
+```
+
 # Heatmap
 
 ```{r}
 df <- read.csv("~/CPM_Paper_Reproduction/data/forCorrelation.csv", header = TRUE)
-rownames(df) <- df[,1]
-df <- df[,-1]
+rownames(df) <- df[, 1]
+df <- df[, -1]
 
-# Calculate correlation matrix
+# Calculate correlations
+cor_df <- cor(t(df[, ]), method = "pearson")
 
-cor_df <- cor(t(df[,]), method = "pearson")
-
-# Cluster and order the matrix
-install.packages("textshape")
-library(textshape)
+# Cluster and order the dataframe
 ordered_cor_df <- cluster_matrix(cor_df, dim = "both", method = "average")
 
 # Plot the heat-map
-install.packages("pheatmap")
-library(pheatmap)
 pheatmap(ordered_cor_df,
          color = colorRampPalette(c("#4d72af","white","#c44e53"))(101),
          breaks = seq(from = -1, to = 1, length.out = 101),
-         border_color = NA,legend=F,show_colnames = F,show_rownames = F,
-         cluster_rows = F, cluster_cols = F,
+         border_color = NA,legend = FALSE, show_colnames = FALSE, 
+         show_rownames = FALSE,
+         cluster_rows = FALSE, cluster_cols = FALSE,
          cellwidth = 1, cellheight = 1,
-         fontfamily='sans',fontsize=10)
-
-
+         fontfamily = 'sans',fontsize = 10)
 ```
+
+# Identify Clusters
+
+```{r}
+distance_df <- 1 - cor_df
+distance_df <- as.dist(distance_df)
+tree <-  hclust(distance_df, method = "average")
+
+memberships <-cutree(tree, k = 5)
+
+memberships[memberships == 5]
+```
+
 
 
 
