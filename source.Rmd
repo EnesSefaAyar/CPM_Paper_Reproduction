@@ -4,17 +4,21 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Install Requirements
+# Install
 ```{r}
 install.packages("textshape")
 install.packages("pheatmap")
+BiocManager::install("UniProt.ws")
+install.packages("enrichR")
 ```
 
-# Load Requirements
+# Import
 
 ```{r}
 library(textshape)
 library(pheatmap)
+library(UniProt.ws)
+library(enrichR)
 ```
 
 # Heatmap
@@ -32,7 +36,7 @@ ordered_cor_df <- cluster_matrix(cor_df, dim = "both", method = "average")
 
 # Plot the heat-map
 pheatmap(ordered_cor_df,
-         color = colorRampPalette(c("#4d72af","white","#c44e53"))(101),
+         color = colorRampPalette(c("#4d72af", "white", "#c44e53")) (101),
          breaks = seq(from = -1, to = 1, length.out = 101),
          border_color = NA,legend = FALSE, show_colnames = FALSE, 
          show_rownames = FALSE,
@@ -44,17 +48,36 @@ pheatmap(ordered_cor_df,
 # Identify Clusters
 
 ```{r}
+n_clusters <- 10
+
 distance_df <- 1 - cor_df
 distance_df <- as.dist(distance_df)
+
 tree <-  hclust(distance_df, method = "average")
 
-memberships <-cutree(tree, k = 10)
+memberships <-cutree(tree, k = n_clusters)
 
-memberships[memberships == 10]
+memberships <- as.data.frame(memberships)
 ```
 
+# Enrichment
 
+```{r}
+# Choose a cluster
+cluster_members <- rownames(memberships)[memberships$memberships == 1]
 
+# Map to Gene names
+up <- UniProt.ws(taxId=9606)
+res <- select(
+    x = up,
+    keys = cluster_members,
+    to = "Gene_Name"
+)
 
+# List of databases: View(listEnrichrDbs())
 
-
+dbs <- c("WikiPathway_2023_Human", "GO_Biological_Process_2023", "KEGG_2021_Human")
+enriched <- enrichr(res$To, dbs)
+?plotEnrich
+plotEnrich(enriched[[3]], showTerms = 20, numChar = 40, y = "Ratio", orderBy = "P.value")
+```
