@@ -27,7 +27,7 @@ df <- df[, -1]
 # Calculate correlations
 cor_df <- cor(t(df[, ]), method = "pearson")
 
-# Cluster and order the dataframe
+# Cluster and order the data frame
 ordered_cor_df <- cluster_matrix(cor_df, dim = "both", method = "average")
 
 # Plot the heat-map
@@ -48,9 +48,9 @@ distance_df <- 1 - cor_df
 distance_df <- as.dist(distance_df)
 tree <-  hclust(distance_df, method = "average")
 
-memberships <-cutree(tree, k = 5)
+memberships <-cutree(tree, k = 10)
 
-memberships[memberships == 5]
+memberships[memberships == 10]
 ```
 
 
