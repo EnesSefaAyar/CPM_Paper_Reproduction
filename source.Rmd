@@ -51,9 +51,8 @@ pheatmap(ordered_cor_df,
 n_clusters <- 10
 
 distance_df <- 1 - cor_df
-distance_df <- as.dist(distance_df)
 
-tree <-  hclust(distance_df, method = "average")
+tree <-  hclust(as.dist(distance_df), method = "average")
 
 memberships <-cutree(tree, k = n_clusters)
 
@@ -78,6 +77,5 @@ res <- select(
 
 dbs <- c("WikiPathway_2023_Human", "GO_Biological_Process_2023", "KEGG_2021_Human")
 enriched <- enrichr(res$To, dbs)
-?plotEnrich
-plotEnrich(enriched[[3]], showTerms = 20, numChar = 40, y = "Ratio", orderBy = "P.value")
+plotEnrich(enriched[[1]], showTerms = 20, numChar = 40, y = "Ratio", orderBy = "P.value")
 ```
