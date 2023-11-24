@@ -41,20 +41,18 @@ pheatmap(ordered_cor_df,
          border_color = NA,legend = FALSE, show_colnames = FALSE, 
          show_rownames = FALSE,
          cluster_rows = FALSE, cluster_cols = FALSE,
-         cellwidth = 1, cellheight = 1,
+         cellwidth = 0.3, cellheight = 0.3,
          fontfamily = 'sans',fontsize = 10)
 ```
 
 # Identify Clusters
 
 ```{r}
-n_clusters <- 10
-
 distance_df <- 1 - cor_df
 
 tree <-  hclust(as.dist(distance_df), method = "average")
 
-memberships <-cutree(tree, k = n_clusters)
+memberships <- cutreeDynamic(tree)
 
 memberships <- as.data.frame(memberships)
 ```
@@ -63,7 +61,7 @@ memberships <- as.data.frame(memberships)
 
 ```{r}
 # Choose a cluster
-cluster_members <- rownames(memberships)[memberships$memberships == 1]
+cluster_members <- rownames(cor_df)[memberships$memberships == 1]
 
 # Map to Gene names
 up <- UniProt.ws(taxId=9606)
