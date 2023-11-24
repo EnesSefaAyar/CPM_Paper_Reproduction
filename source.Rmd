@@ -5,11 +5,12 @@ editor_options:
 ---
 
 # Install
-```{r}
+```{r. eval = FALSE}
 install.packages("textshape")
 install.packages("pheatmap")
 BiocManager::install("UniProt.ws")
 install.packages("enrichR")
+install.packages("dynamicTreeCut")
 ```
 
 # Import
@@ -19,6 +20,7 @@ library(textshape)
 library(pheatmap)
 library(UniProt.ws)
 library(enrichR)
+library(dynamicTreeCut)
 ```
 
 # Heatmap
